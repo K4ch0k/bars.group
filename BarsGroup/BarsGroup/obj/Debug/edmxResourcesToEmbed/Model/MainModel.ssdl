@@ -1,0 +1,274 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="Хранилище ReversiModel" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+  <EntityType Name="DownloadGames">
+    <Key>
+      <PropertyRef Name="ID" />
+    </Key>
+    <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="UserID" Type="int" Nullable="false" />
+  </EntityType>
+  <EntityType Name="GameTypes">
+    <Key>
+      <PropertyRef Name="ID" />
+    </Key>
+    <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Name" Type="varchar" MaxLength="20" Nullable="false" />
+    <Property Name="Description" Type="varchar(max)" />
+  </EntityType>
+  <EntityType Name="OnLineGames">
+    <Key>
+      <PropertyRef Name="ID" />
+    </Key>
+    <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="DateStart" Type="datetime" />
+    <Property Name="Duration" Type="time" Precision="7" />
+    <Property Name="LocationOfCheckers" Type="varchar(max)" />
+    <Property Name="GameLog" Type="varchar(max)" />
+    <Property Name="StatusID" Type="int" Nullable="false" />
+  </EntityType>
+  <EntityType Name="Score">
+    <Key>
+      <PropertyRef Name="ID" />
+    </Key>
+    <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="UserID" Type="int" Nullable="false" />
+    <Property Name="GameTypeID" Type="int" Nullable="false" />
+    <Property Name="Score" Type="real" Nullable="false" />
+    <Property Name="Date" Type="datetime" Nullable="false" />
+    <Property Name="Duration" Type="time" Precision="7" />
+  </EntityType>
+  <EntityType Name="Statistics">
+    <Key>
+      <PropertyRef Name="ID" />
+    </Key>
+    <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="UserID" Type="int" Nullable="false" />
+    <Property Name="GameTypeID" Type="int" Nullable="false" />
+    <Property Name="Quantity" Type="int" Nullable="false" />
+    <Property Name="QuantityWin" Type="int" Nullable="false" />
+    <Property Name="QuantityLose" Type="int" Nullable="false" />
+  </EntityType>
+  <EntityType Name="Status">
+    <Key>
+      <PropertyRef Name="ID" />
+    </Key>
+    <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Name" Type="varchar" MaxLength="20" Nullable="false" />
+  </EntityType>
+  <EntityType Name="StatusGame">
+    <Key>
+      <PropertyRef Name="ID" />
+    </Key>
+    <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Name" Type="varchar" MaxLength="20" Nullable="false" />
+  </EntityType>
+  <EntityType Name="StatusUserInGame">
+    <Key>
+      <PropertyRef Name="ID" />
+    </Key>
+    <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Name" Type="varchar" MaxLength="20" Nullable="false" />
+  </EntityType>
+  <EntityType Name="sysdiagrams">
+    <Key>
+      <PropertyRef Name="diagram_id" />
+    </Key>
+    <Property Name="name" Type="nvarchar" MaxLength="128" Nullable="false" />
+    <Property Name="principal_id" Type="int" Nullable="false" />
+    <Property Name="diagram_id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="version" Type="int" />
+    <Property Name="definition" Type="varbinary(max)" />
+  </EntityType>
+  <EntityType Name="Users">
+    <Key>
+      <PropertyRef Name="ID" />
+    </Key>
+    <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Login" Type="varchar" MaxLength="20" Nullable="false" />
+    <Property Name="Password" Type="varchar" MaxLength="20" Nullable="false" />
+    <Property Name="LoggedIn" Type="bit" Nullable="false" />
+    <Property Name="StatusID" Type="int" Nullable="false" />
+  </EntityType>
+  <EntityType Name="UsersInOnLineGame">
+    <Key>
+      <PropertyRef Name="ID" />
+    </Key>
+    <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="GameID" Type="int" Nullable="false" />
+    <Property Name="UserID" Type="int" Nullable="false" />
+    <Property Name="StatusID" Type="int" Nullable="false" />
+  </EntityType>
+  <Association Name="FK_DownloadGames_Users">
+    <End Role="Users" Type="Self.Users" Multiplicity="1" />
+    <End Role="DownloadGames" Type="Self.DownloadGames" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Users">
+        <PropertyRef Name="ID" />
+      </Principal>
+      <Dependent Role="DownloadGames">
+        <PropertyRef Name="UserID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_OnLineGames_StatusGame">
+    <End Role="StatusGame" Type="Self.StatusGame" Multiplicity="1" />
+    <End Role="OnLineGames" Type="Self.OnLineGames" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="StatusGame">
+        <PropertyRef Name="ID" />
+      </Principal>
+      <Dependent Role="OnLineGames">
+        <PropertyRef Name="StatusID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Score_GameTypes">
+    <End Role="GameTypes" Type="Self.GameTypes" Multiplicity="1" />
+    <End Role="Score" Type="Self.Score" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="GameTypes">
+        <PropertyRef Name="ID" />
+      </Principal>
+      <Dependent Role="Score">
+        <PropertyRef Name="GameTypeID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Score_Users">
+    <End Role="Users" Type="Self.Users" Multiplicity="1" />
+    <End Role="Score" Type="Self.Score" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Users">
+        <PropertyRef Name="ID" />
+      </Principal>
+      <Dependent Role="Score">
+        <PropertyRef Name="UserID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Statistics_GameTypes">
+    <End Role="GameTypes" Type="Self.GameTypes" Multiplicity="1" />
+    <End Role="Statistics" Type="Self.Statistics" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="GameTypes">
+        <PropertyRef Name="ID" />
+      </Principal>
+      <Dependent Role="Statistics">
+        <PropertyRef Name="GameTypeID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Statistics_Users">
+    <End Role="Users" Type="Self.Users" Multiplicity="1" />
+    <End Role="Statistics" Type="Self.Statistics" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Users">
+        <PropertyRef Name="ID" />
+      </Principal>
+      <Dependent Role="Statistics">
+        <PropertyRef Name="UserID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Users_Status">
+    <End Role="Status" Type="Self.Status" Multiplicity="1" />
+    <End Role="Users" Type="Self.Users" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Status">
+        <PropertyRef Name="ID" />
+      </Principal>
+      <Dependent Role="Users">
+        <PropertyRef Name="StatusID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_UsersInOnLineGame_OnLineGames">
+    <End Role="OnLineGames" Type="Self.OnLineGames" Multiplicity="1" />
+    <End Role="UsersInOnLineGame" Type="Self.UsersInOnLineGame" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="OnLineGames">
+        <PropertyRef Name="ID" />
+      </Principal>
+      <Dependent Role="UsersInOnLineGame">
+        <PropertyRef Name="GameID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_UsersInOnLineGame_StatusUserInGame">
+    <End Role="StatusUserInGame" Type="Self.StatusUserInGame" Multiplicity="1" />
+    <End Role="UsersInOnLineGame" Type="Self.UsersInOnLineGame" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="StatusUserInGame">
+        <PropertyRef Name="ID" />
+      </Principal>
+      <Dependent Role="UsersInOnLineGame">
+        <PropertyRef Name="StatusID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_UsersInOnLineGame_Users">
+    <End Role="Users" Type="Self.Users" Multiplicity="1" />
+    <End Role="UsersInOnLineGame" Type="Self.UsersInOnLineGame" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Users">
+        <PropertyRef Name="ID" />
+      </Principal>
+      <Dependent Role="UsersInOnLineGame">
+        <PropertyRef Name="UserID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityContainer Name="Хранилище ReversiModelContainer">
+    <EntitySet Name="DownloadGames" EntityType="Self.DownloadGames" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="GameTypes" EntityType="Self.GameTypes" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="OnLineGames" EntityType="Self.OnLineGames" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Score" EntityType="Self.Score" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Statistics" EntityType="Self.Statistics" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Status" EntityType="Self.Status" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="StatusGame" EntityType="Self.StatusGame" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="StatusUserInGame" EntityType="Self.StatusUserInGame" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Users" EntityType="Self.Users" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="UsersInOnLineGame" EntityType="Self.UsersInOnLineGame" Schema="dbo" store:Type="Tables" />
+    <AssociationSet Name="FK_DownloadGames_Users" Association="Self.FK_DownloadGames_Users">
+      <End Role="Users" EntitySet="Users" />
+      <End Role="DownloadGames" EntitySet="DownloadGames" />
+    </AssociationSet>
+    <AssociationSet Name="FK_OnLineGames_StatusGame" Association="Self.FK_OnLineGames_StatusGame">
+      <End Role="StatusGame" EntitySet="StatusGame" />
+      <End Role="OnLineGames" EntitySet="OnLineGames" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Score_GameTypes" Association="Self.FK_Score_GameTypes">
+      <End Role="GameTypes" EntitySet="GameTypes" />
+      <End Role="Score" EntitySet="Score" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Score_Users" Association="Self.FK_Score_Users">
+      <End Role="Users" EntitySet="Users" />
+      <End Role="Score" EntitySet="Score" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Statistics_GameTypes" Association="Self.FK_Statistics_GameTypes">
+      <End Role="GameTypes" EntitySet="GameTypes" />
+      <End Role="Statistics" EntitySet="Statistics" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Statistics_Users" Association="Self.FK_Statistics_Users">
+      <End Role="Users" EntitySet="Users" />
+      <End Role="Statistics" EntitySet="Statistics" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Users_Status" Association="Self.FK_Users_Status">
+      <End Role="Status" EntitySet="Status" />
+      <End Role="Users" EntitySet="Users" />
+    </AssociationSet>
+    <AssociationSet Name="FK_UsersInOnLineGame_OnLineGames" Association="Self.FK_UsersInOnLineGame_OnLineGames">
+      <End Role="OnLineGames" EntitySet="OnLineGames" />
+      <End Role="UsersInOnLineGame" EntitySet="UsersInOnLineGame" />
+    </AssociationSet>
+    <AssociationSet Name="FK_UsersInOnLineGame_StatusUserInGame" Association="Self.FK_UsersInOnLineGame_StatusUserInGame">
+      <End Role="StatusUserInGame" EntitySet="StatusUserInGame" />
+      <End Role="UsersInOnLineGame" EntitySet="UsersInOnLineGame" />
+    </AssociationSet>
+    <AssociationSet Name="FK_UsersInOnLineGame_Users" Association="Self.FK_UsersInOnLineGame_Users">
+      <End Role="Users" EntitySet="Users" />
+      <End Role="UsersInOnLineGame" EntitySet="UsersInOnLineGame" />
+    </AssociationSet>
+  </EntityContainer>
+</Schema>

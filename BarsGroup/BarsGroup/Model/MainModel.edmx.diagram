@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="7d85e24863cd45169837f448e013944a" Name="Diagram1">
+        <EntityTypeShape EntityType="ReversiModel.DownloadGames" Width="1.5" PointX="3" PointY="4.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="ReversiModel.GameTypes" Width="1.5" PointX="0.75" PointY="1.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="ReversiModel.Score" Width="1.5" PointX="3" PointY="1" IsExpanded="true" />
+        <EntityTypeShape EntityType="ReversiModel.Statistics" Width="1.5" PointX="3" PointY="7" IsExpanded="true" />
+        <EntityTypeShape EntityType="ReversiModel.sysdiagrams" Width="1.5" PointX="5.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="ReversiModel.Users" Width="1.5" PointX="0.75" PointY="4.125" IsExpanded="true" />
+        <AssociationConnector Association="ReversiModel.FK_DownloadGames_Users" ManuallyRouted="false" />
+        <AssociationConnector Association="ReversiModel.FK_Score_GameTypes" ManuallyRouted="false" />
+        <AssociationConnector Association="ReversiModel.FK_Statistics_GameTypes" ManuallyRouted="false" />
+        <AssociationConnector Association="ReversiModel.FK_Score_Users" ManuallyRouted="false" />
+        <AssociationConnector Association="ReversiModel.FK_Statistics_Users" ManuallyRouted="false" />
+        <EntityTypeShape EntityType="ReversiModel.Status" Width="1.5" PointX="0.75" PointY="7.75" />
+        <AssociationConnector Association="ReversiModel.FK_Users_Status" />
+        <EntityTypeShape EntityType="ReversiModel.OnLineGames" Width="1.5" PointX="3.75" PointY="11.5" />
+        <EntityTypeShape EntityType="ReversiModel.UsersInOnLineGame" Width="1.5" PointX="6" PointY="4.625" />
+        <AssociationConnector Association="ReversiModel.FK_UsersInOnLineGame_OnLineGames" />
+        <AssociationConnector Association="ReversiModel.FK_UsersInOnLineGame_Users" />
+        <EntityTypeShape EntityType="ReversiModel.StatusUserInGame" Width="1.5" PointX="5.375" PointY="7.875" />
+        <AssociationConnector Association="ReversiModel.FK_UsersInOnLineGame_StatusUserInGame" />
+        <EntityTypeShape EntityType="ReversiModel.StatusGame" Width="1.5" PointX="1.5" PointY="12" />
+        <AssociationConnector Association="ReversiModel.FK_OnLineGames_StatusGame" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

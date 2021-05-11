@@ -1,0 +1,40 @@
+﻿<Window x:Class="BarsGroup.View.Windows.GameLogWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:BarsGroup.View.Windows"
+        mc:Ignorable="d" x:Name="LogGameWindow"
+        Title="Просмотр лога игры" Height="450" Width="800" Closing="LogGameWindow_Closing"
+        MinHeight="250" MinWidth="400">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition Height="0.1*"/>
+            <RowDefinition Height="30"/>
+        </Grid.RowDefinitions>
+        <FlowDocumentScrollViewer x:Name="MainFlowDocument">
+
+        </FlowDocumentScrollViewer>
+
+        <Viewbox Stretch="Uniform" Grid.Row="1" HorizontalAlignment="Left">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                <TextBlock Text="Выбор размера текста:" FontSize="20" />
+                <RadioButton x:Name="Text16" Content="16" FontSize="20" VerticalContentAlignment="Center" Checked="SelectFontSizeRadioBtn"/>
+                <RadioButton x:Name="Text18" Content="18" FontSize="20" VerticalContentAlignment="Center" Checked="SelectFontSizeRadioBtn"/>
+                <RadioButton x:Name="Text20" Content="20" FontSize="20" VerticalContentAlignment="Center" Checked="SelectFontSizeRadioBtn"/>
+                <RadioButton x:Name="Text24" Content="24" FontSize="20" VerticalContentAlignment="Center" Checked="SelectFontSizeRadioBtn"/>
+                <RadioButton x:Name="Text30" Content="30" FontSize="20" VerticalContentAlignment="Center" Checked="SelectFontSizeRadioBtn"/>
+                <RadioButton x:Name="Text32" Content="32" FontSize="20" VerticalContentAlignment="Center" Checked="SelectFontSizeRadioBtn"/>
+                <RadioButton x:Name="Text34" Content="34" FontSize="20" VerticalContentAlignment="Center" Checked="SelectFontSizeRadioBtn"/>
+                <RadioButton x:Name="Text38" Content="38" FontSize="20" VerticalContentAlignment="Center" Checked="SelectFontSizeRadioBtn"/>
+                <RadioButton x:Name="Text50" Content="50" FontSize="20" VerticalContentAlignment="Center" Checked="SelectFontSizeRadioBtn"/>
+
+            </StackPanel>
+        </Viewbox>
+        
+        
+        <Button x:Name="SaveLogBtn" Content="Сохранить лог" Grid.Row="2" Click="SaveLogBtn_Click"
+                Background="#FF314933" FontSize="18" Padding="3"/>
+    </Grid>
+</Window>

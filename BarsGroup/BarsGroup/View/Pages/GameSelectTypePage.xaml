@@ -1,0 +1,33 @@
+﻿<Page x:Class="BarsGroup.View.Pages.GameSelectTypePage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:BarsGroup.View.Pages"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="GameSelectTypePage" Background="#FF00362A">
+
+    <Grid>
+
+        <Button x:Name="LogInBtn" Content="Вход" Click="LogInBtn_Click"
+                Width="150" Height="25" Margin="60,20" HorizontalAlignment="Left"
+                VerticalAlignment="Top" Background="SeaGreen" Visibility="Hidden"/>
+
+        <Viewbox Stretch="Uniform" Margin="100">
+            <StackPanel>
+                <Button x:Name="StartGameBot" Content="Против бота" Width="300"
+                            Background="#FF00618B" FontSize="18" Click="StartGameBot_Click"
+                            Padding="5" ToolTip="Начнется игра с ботом, режим подходит для тренировки"/>
+                
+                <Button x:Name="StartGameHuman" Content="Против человека (интернет)" Width="300"
+                            Background="#FF00618B" FontSize="18" Click="StartGameHuman_Click"
+                            Padding="5" Margin="0,10,0,0" ToolTip="Начнется поиск соперника по 'интернету'"/>
+                
+                <Button x:Name="StartGameLocal" Content="Против человека (локально)" Width="300"
+                            Background="#FF00618B" FontSize="18" Click="StartGameLocal_Click"
+                            Padding="5" Margin="0,10,0,0" ToolTip="Начнется игра с человеком на данном ПК"/>
+            </StackPanel>
+        </Viewbox>
+    </Grid>
+</Page>

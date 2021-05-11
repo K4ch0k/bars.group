@@ -1,0 +1,64 @@
+﻿<Window x:Class="BarsGroup.View.Windows.PlayingFieldHumanWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:BarsGroup.View.Windows"
+        mc:Ignorable="d"
+        Title="Игра против человека" Height="830" Width="773" MinHeight="580" MinWidth="534"
+        Background="Black">
+    <Grid x:Name="MainGrid">
+        <Viewbox Stretch="Uniform">
+            <StackPanel>
+                <StackPanel x:Name="PlayingField" Margin="5" Background="Black" MouseRightButtonDown="PlayingField_MouseRightButtonDown">
+
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal" Background="Snow" HorizontalAlignment="Left">
+                    <Button x:Name="SeeLogBtn" Content="Смотреть Лог" Click="SeeLogBtn_Click"
+                        Background="SeaGreen" Foreground="Snow"
+                        FontSize="16" Width="120" BorderBrush="Snow" />
+                    <Label Background="Black" Width="1"/>
+
+                    <TextBlock x:Name="InfoWhoWalks" FontSize="18" Padding="8" Width="150">
+                        <Run Text="Ходят:"/>
+                        <Run x:Name="WhoWalksTxt" Text="{Binding WhoWalks, UpdateSourceTrigger=PropertyChanged}"/>
+                    </TextBlock>
+                    <Label Background="Black" Width="1"/>
+
+                    <TextBlock x:Name="InfoWalksNumer" FontSize="18" Padding="8" Width="130"
+                               ToolTip="Отображает номер хода">
+                        <Run Text="Ход №"/>
+                        <Run x:Name="WalksNumerTxt" Text="{Binding WalksNumber, UpdateSourceTrigger=PropertyChanged}"/>
+                    </TextBlock>
+                    <Label Background="Black" Width="1"/>
+
+                    <StackPanel>
+                        <TextBlock x:Name="InfoWhiteScore" FontSize="12" Padding="3" Width="50" ToolTip="Количество белых шашек на поле">
+                            <Run Text="○:"/>
+                            <Run x:Name="ScoreWhite" Text="{Binding User2Quantity, UpdateSourceTrigger=PropertyChanged}"/>
+                        </TextBlock>
+                        <TextBlock x:Name="InfoBlackScore" FontSize="12" Padding="3" Width="50" ToolTip="Количество черных шашек на поле">
+                            <Run Text="⬤:"/>
+                            <Run x:Name="ScoreBlack" Text="{Binding User1Quantity, UpdateSourceTrigger=PropertyChanged}"/>
+                        </TextBlock>
+                    </StackPanel>
+                    <Label Background="Black" Width="1"/>
+
+                    <TextBlock x:Name="InfoTimer" FontSize="18" Padding="3" Width="100"
+                           TextAlignment="Center" VerticalAlignment="Center" ToolTip="Секунды показывать при наведении"/>
+                    <Label Background="Black" Width="1"/>
+
+                    <Button x:Name="LoseBtn" Content="Сдаться" Click="LoseBtn_Click"
+                        Background="SeaGreen" Foreground="Snow"
+                        FontSize="16" Width="100" BorderBrush="Snow"/>
+                    <Label Background="Black" Width="1"/>
+
+                    <Button x:Name="NextStepBtn" Content="Пропустить" Click="NextStepBtn_Click"
+                        Background="SeaGreen" Foreground="Snow"
+                        FontSize="16" Width="100" BorderBrush="Snow"/>
+                </StackPanel>
+            </StackPanel>
+        </Viewbox>
+    </Grid>
+</Window>

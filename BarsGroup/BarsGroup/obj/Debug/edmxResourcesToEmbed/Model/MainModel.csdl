@@ -1,0 +1,294 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="ReversiModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+  <EntityType Name="DownloadGames">
+    <Key>
+      <PropertyRef Name="ID" />
+    </Key>
+    <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="UserID" Type="Int32" Nullable="false" />
+    <NavigationProperty Name="Users" Relationship="Self.FK_DownloadGames_Users" FromRole="DownloadGames" ToRole="Users" />
+  </EntityType>
+  <EntityType Name="GameTypes">
+    <Key>
+      <PropertyRef Name="ID" />
+    </Key>
+    <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Name" Type="String" MaxLength="20" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <NavigationProperty Name="Score" Relationship="Self.FK_Score_GameTypes" FromRole="GameTypes" ToRole="Score" />
+    <NavigationProperty Name="Statistics" Relationship="Self.FK_Statistics_GameTypes" FromRole="GameTypes" ToRole="Statistics" />
+  </EntityType>
+  <EntityType Name="Score">
+    <Key>
+      <PropertyRef Name="ID" />
+    </Key>
+    <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="UserID" Type="Int32" Nullable="false" />
+    <Property Name="GameTypeID" Type="Int32" Nullable="false" />
+    <Property Name="Score1" Type="Single" Nullable="false" />
+    <Property Name="Date" Type="DateTime" Nullable="false" Precision="3" />
+    <NavigationProperty Name="GameTypes" Relationship="Self.FK_Score_GameTypes" FromRole="Score" ToRole="GameTypes" />
+    <NavigationProperty Name="Users" Relationship="Self.FK_Score_Users" FromRole="Score" ToRole="Users" />
+    <Property Name="Duration" Type="Time" Precision="7" />
+  </EntityType>
+  <EntityType Name="Statistics">
+    <Key>
+      <PropertyRef Name="ID" />
+    </Key>
+    <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="UserID" Type="Int32" Nullable="false" />
+    <Property Name="GameTypeID" Type="Int32" Nullable="false" />
+    <Property Name="Quantity" Type="Int32" Nullable="false" />
+    <Property Name="QuantityWin" Type="Int32" Nullable="false" />
+    <Property Name="QuantityLose" Type="Int32" Nullable="false" />
+    <NavigationProperty Name="GameTypes" Relationship="Self.FK_Statistics_GameTypes" FromRole="Statistics" ToRole="GameTypes" />
+    <NavigationProperty Name="Users" Relationship="Self.FK_Statistics_Users" FromRole="Statistics" ToRole="Users" />
+  </EntityType>
+  <EntityType Name="sysdiagrams">
+    <Key>
+      <PropertyRef Name="diagram_id" />
+    </Key>
+    <Property Name="name" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="principal_id" Type="Int32" Nullable="false" />
+    <Property Name="diagram_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="version" Type="Int32" />
+    <Property Name="definition" Type="Binary" MaxLength="Max" FixedLength="false" />
+  </EntityType>
+  <EntityType Name="Users">
+    <Key>
+      <PropertyRef Name="ID" />
+    </Key>
+    <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Login" Type="String" MaxLength="20" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="Password" Type="String" MaxLength="20" FixedLength="false" Unicode="false" Nullable="false" />
+    <NavigationProperty Name="DownloadGames" Relationship="Self.FK_DownloadGames_Users" FromRole="Users" ToRole="DownloadGames" />
+    <NavigationProperty Name="Score" Relationship="Self.FK_Score_Users" FromRole="Users" ToRole="Score" />
+    <NavigationProperty Name="Statistics" Relationship="Self.FK_Statistics_Users" FromRole="Users" ToRole="Statistics" />
+    <Property Name="LoggedIn" Type="Boolean" Nullable="false" />
+    <Property Name="StatusID" Type="Int32" Nullable="false" />
+    <NavigationProperty Name="Status" Relationship="ReversiModel.FK_Users_Status" FromRole="Users" ToRole="Status" />
+    <NavigationProperty Name="UsersInOnLineGame" Relationship="ReversiModel.FK_UsersInOnLineGame_Users" FromRole="Users" ToRole="UsersInOnLineGame" />
+  </EntityType>
+  <Association Name="FK_DownloadGames_Users">
+    <End Role="Users" Type="Self.Users" Multiplicity="1" />
+    <End Role="DownloadGames" Type="Self.DownloadGames" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Users">
+        <PropertyRef Name="ID" />
+      </Principal>
+      <Dependent Role="DownloadGames">
+        <PropertyRef Name="UserID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Score_GameTypes">
+    <End Role="GameTypes" Type="Self.GameTypes" Multiplicity="1" />
+    <End Role="Score" Type="Self.Score" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="GameTypes">
+        <PropertyRef Name="ID" />
+      </Principal>
+      <Dependent Role="Score">
+        <PropertyRef Name="GameTypeID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Statistics_GameTypes">
+    <End Role="GameTypes" Type="Self.GameTypes" Multiplicity="1" />
+    <End Role="Statistics" Type="Self.Statistics" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="GameTypes">
+        <PropertyRef Name="ID" />
+      </Principal>
+      <Dependent Role="Statistics">
+        <PropertyRef Name="GameTypeID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Score_Users">
+    <End Role="Users" Type="Self.Users" Multiplicity="1" />
+    <End Role="Score" Type="Self.Score" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Users">
+        <PropertyRef Name="ID" />
+      </Principal>
+      <Dependent Role="Score">
+        <PropertyRef Name="UserID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Statistics_Users">
+    <End Role="Users" Type="Self.Users" Multiplicity="1" />
+    <End Role="Statistics" Type="Self.Statistics" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Users">
+        <PropertyRef Name="ID" />
+      </Principal>
+      <Dependent Role="Statistics">
+        <PropertyRef Name="UserID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityContainer Name="MainEntities" annotation:LazyLoadingEnabled="true">
+    <EntitySet Name="DownloadGames" EntityType="Self.DownloadGames" />
+    <EntitySet Name="GameTypes" EntityType="Self.GameTypes" />
+    <EntitySet Name="Score" EntityType="Self.Score" />
+    <EntitySet Name="Statistics" EntityType="Self.Statistics" />
+    <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" />
+    <EntitySet Name="Users" EntityType="Self.Users" />
+    <AssociationSet Name="FK_DownloadGames_Users" Association="Self.FK_DownloadGames_Users">
+      <End Role="Users" EntitySet="Users" />
+      <End Role="DownloadGames" EntitySet="DownloadGames" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Score_GameTypes" Association="Self.FK_Score_GameTypes">
+      <End Role="GameTypes" EntitySet="GameTypes" />
+      <End Role="Score" EntitySet="Score" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Statistics_GameTypes" Association="Self.FK_Statistics_GameTypes">
+      <End Role="GameTypes" EntitySet="GameTypes" />
+      <End Role="Statistics" EntitySet="Statistics" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Score_Users" Association="Self.FK_Score_Users">
+      <End Role="Users" EntitySet="Users" />
+      <End Role="Score" EntitySet="Score" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Statistics_Users" Association="Self.FK_Statistics_Users">
+      <End Role="Users" EntitySet="Users" />
+      <End Role="Statistics" EntitySet="Statistics" />
+    </AssociationSet>
+    <EntitySet Name="Status" EntityType="ReversiModel.Status" />
+    <AssociationSet Name="FK_Users_Status" Association="ReversiModel.FK_Users_Status">
+      <End Role="Status" EntitySet="Status" />
+      <End Role="Users" EntitySet="Users" />
+    </AssociationSet>
+    <EntitySet Name="OnLineGames" EntityType="ReversiModel.OnLineGames" />
+    <EntitySet Name="UsersInOnLineGame" EntityType="ReversiModel.UsersInOnLineGame" />
+    <AssociationSet Name="FK_UsersInOnLineGame_OnLineGames" Association="ReversiModel.FK_UsersInOnLineGame_OnLineGames">
+      <End Role="OnLineGames" EntitySet="OnLineGames" />
+      <End Role="UsersInOnLineGame" EntitySet="UsersInOnLineGame" />
+    </AssociationSet>
+    <AssociationSet Name="FK_UsersInOnLineGame_Users" Association="ReversiModel.FK_UsersInOnLineGame_Users">
+      <End Role="Users" EntitySet="Users" />
+      <End Role="UsersInOnLineGame" EntitySet="UsersInOnLineGame" />
+    </AssociationSet>
+    <EntitySet Name="StatusUserInGame" EntityType="ReversiModel.StatusUserInGame" />
+    <AssociationSet Name="FK_UsersInOnLineGame_StatusUserInGame" Association="ReversiModel.FK_UsersInOnLineGame_StatusUserInGame">
+      <End Role="StatusUserInGame" EntitySet="StatusUserInGame" />
+      <End Role="UsersInOnLineGame" EntitySet="UsersInOnLineGame" />
+    </AssociationSet>
+    <EntitySet Name="StatusGame" EntityType="ReversiModel.StatusGame" />
+    <AssociationSet Name="FK_OnLineGames_StatusGame" Association="ReversiModel.FK_OnLineGames_StatusGame">
+      <End Role="StatusGame" EntitySet="StatusGame" />
+      <End Role="OnLineGames" EntitySet="OnLineGames" />
+    </AssociationSet>
+  </EntityContainer>
+  <EntityType Name="Status">
+    <Key>
+      <PropertyRef Name="ID" />
+    </Key>
+    <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Name" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="false" />
+    <NavigationProperty Name="Users" Relationship="ReversiModel.FK_Users_Status" FromRole="Status" ToRole="Users" />
+  </EntityType>
+  <Association Name="FK_Users_Status">
+    <End Type="ReversiModel.Status" Role="Status" Multiplicity="1" />
+    <End Type="ReversiModel.Users" Role="Users" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Status">
+        <PropertyRef Name="ID" />
+      </Principal>
+      <Dependent Role="Users">
+        <PropertyRef Name="StatusID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityType Name="OnLineGames">
+    <Key>
+      <PropertyRef Name="ID" />
+    </Key>
+    <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="DateStart" Type="DateTime" Precision="3" />
+    <Property Name="Duration" Type="Time" Precision="7" />
+    <Property Name="LocationOfCheckers" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="GameLog" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <NavigationProperty Name="UsersInOnLineGame" Relationship="ReversiModel.FK_UsersInOnLineGame_OnLineGames" FromRole="OnLineGames" ToRole="UsersInOnLineGame" />
+    <Property Name="StatusID" Type="Int32" Nullable="false" />
+    <NavigationProperty Name="StatusGame" Relationship="ReversiModel.FK_OnLineGames_StatusGame" FromRole="OnLineGames" ToRole="StatusGame" />
+  </EntityType>
+  <EntityType Name="UsersInOnLineGame">
+    <Key>
+      <PropertyRef Name="ID" />
+    </Key>
+    <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="GameID" Type="Int32" Nullable="false" />
+    <Property Name="UserID" Type="Int32" Nullable="false" />
+    <NavigationProperty Name="OnLineGames" Relationship="ReversiModel.FK_UsersInOnLineGame_OnLineGames" FromRole="UsersInOnLineGame" ToRole="OnLineGames" />
+    <NavigationProperty Name="Users" Relationship="ReversiModel.FK_UsersInOnLineGame_Users" FromRole="UsersInOnLineGame" ToRole="Users" />
+    <Property Name="StatusID" Type="Int32" Nullable="false" />
+    <NavigationProperty Name="StatusUserInGame" Relationship="ReversiModel.FK_UsersInOnLineGame_StatusUserInGame" FromRole="UsersInOnLineGame" ToRole="StatusUserInGame" />
+  </EntityType>
+  <Association Name="FK_UsersInOnLineGame_OnLineGames">
+    <End Type="ReversiModel.OnLineGames" Role="OnLineGames" Multiplicity="1" />
+    <End Type="ReversiModel.UsersInOnLineGame" Role="UsersInOnLineGame" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="OnLineGames">
+        <PropertyRef Name="ID" />
+      </Principal>
+      <Dependent Role="UsersInOnLineGame">
+        <PropertyRef Name="GameID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_UsersInOnLineGame_Users">
+    <End Type="ReversiModel.Users" Role="Users" Multiplicity="1" />
+    <End Type="ReversiModel.UsersInOnLineGame" Role="UsersInOnLineGame" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Users">
+        <PropertyRef Name="ID" />
+      </Principal>
+      <Dependent Role="UsersInOnLineGame">
+        <PropertyRef Name="UserID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityType Name="StatusUserInGame">
+    <Key>
+      <PropertyRef Name="ID" />
+    </Key>
+    <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Name" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="false" />
+    <NavigationProperty Name="UsersInOnLineGame" Relationship="ReversiModel.FK_UsersInOnLineGame_StatusUserInGame" FromRole="StatusUserInGame" ToRole="UsersInOnLineGame" />
+  </EntityType>
+  <Association Name="FK_UsersInOnLineGame_StatusUserInGame">
+    <End Type="ReversiModel.StatusUserInGame" Role="StatusUserInGame" Multiplicity="1" />
+    <End Type="ReversiModel.UsersInOnLineGame" Role="UsersInOnLineGame" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="StatusUserInGame">
+        <PropertyRef Name="ID" />
+      </Principal>
+      <Dependent Role="UsersInOnLineGame">
+        <PropertyRef Name="StatusID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityType Name="StatusGame">
+    <Key>
+      <PropertyRef Name="ID" />
+    </Key>
+    <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Name" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="false" />
+    <NavigationProperty Name="OnLineGames" Relationship="ReversiModel.FK_OnLineGames_StatusGame" FromRole="StatusGame" ToRole="OnLineGames" />
+  </EntityType>
+  <Association Name="FK_OnLineGames_StatusGame">
+    <End Type="ReversiModel.StatusGame" Role="StatusGame" Multiplicity="1" />
+    <End Type="ReversiModel.OnLineGames" Role="OnLineGames" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="StatusGame">
+        <PropertyRef Name="ID" />
+      </Principal>
+      <Dependent Role="OnLineGames">
+        <PropertyRef Name="StatusID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+</Schema>
