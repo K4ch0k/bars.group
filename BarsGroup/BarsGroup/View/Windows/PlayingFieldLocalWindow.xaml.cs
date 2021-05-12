@@ -47,9 +47,9 @@ namespace BarsGroup.View.Windows
                     NewBtn.MouseEnter += Shashka_MouseEnter;
                     NewBtn.MouseLeave += Shashka_MouseLeave;
                     newStackpanel.Children.Add(NewBtn);
-                    //Console.Write(NewBtn.Name + " ");
+                    Console.Write(NewBtn.Name + " ");
                 }
-                //Console.WriteLine();
+                Console.WriteLine();
             }
 
         }

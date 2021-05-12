@@ -32,8 +32,9 @@ namespace BarsGroup.View.Windows
             List<UsersInOnLineGame> AllEnemy = Core.db.UsersInOnLineGame.Where(item => item.GameID == ThisUser.GameID).ToList();
             var Enemy = AllEnemy.Find(item => item.UserID != ThisUser.UserID);
 
-            
-            this.Title = "Игра против пользователя с ником " + Enemy.Users.Login;
+            EnemyLogin = Enemy.Users.Login;
+
+            this.Title = "Игра против пользователя с ником " + EnemyLogin;
             if (ThisUser.StatusID == 1)
             {
                 this.Title += " (Ваш ход)";
@@ -84,6 +85,7 @@ namespace BarsGroup.View.Windows
         char[] m = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h' };
 
         public UsersInOnLineGame ThisUser { get; set; }
+        public string EnemyLogin { get; set; }
         public OnLineGames CurrentGame { get; set; } = new OnLineGames();
 
         public string[,] CurrentGameArea { get; set; } = new string[8,8];
@@ -901,7 +903,7 @@ namespace BarsGroup.View.Windows
             Timer.Start();
         }
 
-        public void TickTimer(object sender, EventArgs e)
+        public async void TickTimer(object sender, EventArgs e)
         {
             Seconds++;
             if (Seconds == 59)
@@ -915,37 +917,99 @@ namespace BarsGroup.View.Windows
                 Hours++;
             }
 
-            /*
+            
             Core.db = new MainEntities();
 
             OnLineGames Gamesdb = await Core.db.OnLineGames.FindAsync(CurrentGame.ID);
 
             if (CurrentGame != Gamesdb)
             {
+                Console.WriteLine("Изменение произошло");
+
                 CurrentGame = Gamesdb;
 
-                string[] words = CurrentGame.LocationOfCheckers.Split(new char[] { ' ' });
+                var CurrentLocationOfChekersStr = String.Empty;
 
-                var a = 0;
-
-                for (int i = 0; i <= 7; i++)
+                foreach (var item in CurrentGameArea)
                 {
-                    for (int j = 0; j <= 7; j++)
-                    {
-                        // Удалить все кнопки с поля и заново поставить
-                        CurrentGameArea[i, j] = words[a];
-                        a++;
-
-                    }
+                    CurrentLocationOfChekersStr += item + " ";
                 }
+
+                if (Gamesdb.LocationOfCheckers != String.Empty && Gamesdb.LocationOfCheckers != CurrentLocationOfChekersStr)
+                {
+                    string[] words = CurrentGame.LocationOfCheckers.Split(new char[] { ' ' });
+
+                    var a = 0;
+                    User1Quantity = 0;
+                    User2Quantity = 0;
+
+                    PlayingField.Children.RemoveRange(0, PlayingField.Children.Count);
+
+                    for (int i = 0; i <= 7; i++)
+                    {
+                        StackPanel newStackpanel = new StackPanel();
+                        newStackpanel.Orientation = Orientation.Horizontal;
+                        newStackpanel.Name = "N" + i;
+                        PlayingField.Children.Add(newStackpanel);
+                        for (int j = 0; j <= 7; j++)
+                        {
+                            CurrentGameArea[i, j] = words[a];
+
+                            Button NewBtn = new Button();
+                            NewBtn.Name = "N" + i + j;
+                            NewBtn.Content = "" + m[j] + (i + 1);
+                            NewBtn.Style = this.TryFindResource("Shashka") as Style;
+
+                            if (CurrentGameArea[i, j].ToString()[0] == 'W')
+                            {
+                                User2Quantity++;
+                                NewBtn.Background = Brushes.White;
+                                NewBtn.Foreground = Brushes.White;
+                            }
+                            if (CurrentGameArea[i, j].ToString()[0] == 'B')
+                            {
+                                User1Quantity++;
+                                NewBtn.Background = Brushes.Black;
+                                NewBtn.Foreground = Brushes.Black;
+                            }
+
+                            NewBtn.Click += Shashka_Click;
+                            NewBtn.MouseEnter += Shashka_MouseEnter;
+                            NewBtn.MouseLeave += Shashka_MouseLeave;
+                            newStackpanel.Children.Add(NewBtn);
+
+                            a++;
+                        }
+                    }
+
+                    try
+                    {
+                        //CurrentGame.LocationOfCheckers = CurrentLocationOfChekersStr;
+                        var EditGame = await Core.db.OnLineGames.FindAsync(CurrentGame.ID);
+                        EditGame.LocationOfCheckers = "";
+
+                        await Core.db.SaveChangesAsync();
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(ex.Message.ToString());
+                    }
+
+                    WalksNumber++;
+                } 
             }
-            */
 
-
-            if (WalksNumber % 2 == 0)
-                WhoWalks = "Белые";
-            else
+            this.Title = "Игра против пользователя с ником " + EnemyLogin;
+            if (WalksNumber % 2 != 0 && ThisUser.StatusID == 1)
+            {
                 WhoWalks = "Черные";
+                this.Title += " (Ваш ход)";
+            }
+            else
+            {
+                WhoWalks = "Белые";
+                this.Title += " (Ход противника)";
+            }
             WhoWalksTxt.Text = WhoWalks;
             WalksNumerTxt.Text = WalksNumber.ToString();
             InfoTimer.Text = string.Format("{0:00}:{1:00}", Hours, Minutes);
