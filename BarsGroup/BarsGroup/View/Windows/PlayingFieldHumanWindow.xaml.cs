@@ -3,16 +3,11 @@ using BarsGroup.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 using System.Windows.Threading;
 
 namespace BarsGroup.View.Windows
@@ -88,7 +83,7 @@ namespace BarsGroup.View.Windows
         public string EnemyLogin { get; set; }
         public OnLineGames CurrentGame { get; set; } = new OnLineGames();
 
-        public string[,] CurrentGameArea { get; set; } = new string[8,8];
+        public string[,] CurrentGameArea { get; set; } = new string[8, 8];
 
         public Button Shashka1 { get; set; } = new Button();
         public Button Shashka2 { get; set; } = new Button();
@@ -699,32 +694,27 @@ namespace BarsGroup.View.Windows
                 newparagraph.Inlines.Add(newRun);
                 GameLogDocument.Blocks.Add(newparagraph);
 
+                CurrentGame.LocationOfCheckers = "";
+
                 foreach (var item in CurrentGameArea)
                 {
                     CurrentGame.LocationOfCheckers += item + " ";
                 }
 
-                CurrentGame.GameLog = "";
-                /*
-                foreach (var item in GameLogDocument.Blocks)
-                {
-                    CurrentGame.GameLog += item.ToString();
-                    CurrentGame.GameLog += "\n\n";
-                }
-                */
+                var GameLogText = new TextRange(GameLogDocument.ContentStart, GameLogDocument.ContentEnd);
 
                 try
                 {
+                    CurrentGame.GameLog = GameLogText.Text;
                     var EditGame = await Core.db.OnLineGames.FindAsync(CurrentGame.ID);
                     EditGame = CurrentGame;
 
                     await Core.db.SaveChangesAsync();
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     MessageBox.Show(ex.Message.ToString());
                 }
-
             }
         }
 
@@ -811,14 +801,15 @@ namespace BarsGroup.View.Windows
             return true;
         }
 
-        private void LoseBtn_Click(object sender, RoutedEventArgs e)
+        private async void LoseBtn_Click(object sender, RoutedEventArgs e)
         {
-            MessageBoxResult UserSelect = MessageBox.Show("Вы действительно хотите сдаться?\nЕсли вы нажмете \"Да\" то вам будет засчитано поражение", "Предупреждение", MessageBoxButton.YesNoCancel, MessageBoxImage.Information);
+            MessageBoxResult UserSelect = MessageBox.Show("Вы действительно хотите сдаться?\nЕсли вы нажмете \"Да\" то вам будет засчитано поражение", "Предупреждение", MessageBoxButton.YesNoCancel, MessageBoxImage.Exclamation);
 
             if (UserSelect == MessageBoxResult.Yes)
             {
-                var a = Seconds / 60;
-                decimal total = (Minutes + (Hours * 60) + (Seconds / 60));
+                var H = Hours * 60 * 60;
+                var M = Minutes * 60;
+                var S = Seconds + M + H;
 
                 Paragraph newparagraph = new Paragraph();
                 Run newRun = new Run();
@@ -826,23 +817,61 @@ namespace BarsGroup.View.Windows
 
 
                 if (WalksNumber % 2 == 0)
-                {
-                    MessageBox.Show("Ваш противник сдался\nВаши очки: " + User1Quantity * total, "Вы выиграли!", MessageBoxButton.OK, MessageBoxImage.Information);
                     newRun.Text += "Белые сдались";
-                }
                 else
-                {
-                    MessageBox.Show("Ваш противник сдался\nВаши очки: " + User2Quantity * total, "Вы выиграли!", MessageBoxButton.OK, MessageBoxImage.Information);
                     newRun.Text += "Черные сдались";
-                }
+
                 newparagraph.Inlines.Add(newRun);
                 GameLogDocument.Blocks.Add(newparagraph);
                 newparagraph.Inlines.Clear();
                 newRun.Text = "Итоговый счет игры:\n"
-                            + "Всего белых шашек на поле:" + User1Quantity + "; Очки белого:" + (User2Quantity * total)
-                            + "\nВсего черных шашек на поле:" + User2Quantity + "; Очки черного:" + (User1Quantity * total);
+                            + "Всего белых шашек на поле:" + User1Quantity + "; Очки белого:" + (User2Quantity * S)
+                            + "\nВсего черных шашек на поле:" + User2Quantity + "; Очки черного:" + (User1Quantity * S);
                 newparagraph.Inlines.Add(newRun);
                 GameLogDocument.Blocks.Add(newparagraph);
+
+                var GameLogText = new TextRange(GameLogDocument.ContentStart, GameLogDocument.ContentEnd);
+
+                try
+                {
+                    CurrentGame.GameLog = GameLogText.Text;
+                    CurrentGame.Duration = new TimeSpan(Hours, Minutes, Seconds);
+                    CurrentGame.StatusID = 3;
+                    var EditGame = await Core.db.OnLineGames.FindAsync(CurrentGame.ID);
+                    EditGame = CurrentGame;
+
+                    var ThisUserInGame = await Core.db.UsersInOnLineGame.FindAsync(ThisUser.ID);
+                    ThisUserInGame.StatusID = 4;
+
+                    // Работа со статистикой и рекордами осталась
+
+                    await Core.db.SaveChangesAsync();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message.ToString());
+                }
+
+                if (WalksNumber % 2 != 0 && ThisUser.StatusID == 1)
+                    MessageBox.Show("Ваши очки: " + User1Quantity * S, "Вы проиграли", MessageBoxButton.OK, MessageBoxImage.Information);
+                else if (WalksNumber % 2 == 0 && ThisUser.StatusID == 2)
+                    MessageBox.Show("Ваши очки: " + User2Quantity * S, "Вы проиграли", MessageBoxButton.OK, MessageBoxImage.Information);
+
+                foreach (Window item in Application.Current.Windows)
+                {
+                    if (item.Name == "LogGameWindow")
+                    {
+                        this.Close();
+                        return;
+                    }
+                }
+
+                Timer.Stop();
+
+                var newGameLogDocument = GameLogDocument;
+                GameLogWindow window = new GameLogWindow(newGameLogDocument);
+                window.Show();
+
                 this.Close();
             }
         }
@@ -854,7 +883,7 @@ namespace BarsGroup.View.Windows
             {
                 if (item.Name == "LogGameWindow")
                 {
-                    MessageBox.Show("Можно открыть только одно окно с логом игры", "Информация", MessageBoxButton.OK, MessageBoxImage.Information);
+                    MessageBox.Show("Окно с логом игры уже открыто", "Информация", MessageBoxButton.OK, MessageBoxImage.Information);
                     return;
                 }
             }
@@ -866,6 +895,18 @@ namespace BarsGroup.View.Windows
 
         private void NextStepBtn_Click(object sender, RoutedEventArgs e)
         {
+            MessageBox.Show("Действие находится в разработке", "Бета версия", MessageBoxButton.OK, MessageBoxImage.Information);
+            /*
+            if (WalksNumber % 2 == 0 && ThisUser.StatusID != 2)
+            {
+                MessageBox.Show("Сейчас не ваш ход", "Информация", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+            if (WalksNumber % 2 == 1 && ThisUser.StatusID != 1)
+            {
+                MessageBox.Show("Сейчас не ваш ход", "Информация", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
             ChangeBtnNewBtn();
 
             Paragraph newparagraph = new Paragraph();
@@ -893,6 +934,22 @@ namespace BarsGroup.View.Windows
             WalksNumerTxt.Text = WalksNumber.ToString();
             newparagraph.Inlines.Add(newRun);
             GameLogDocument.Blocks.Add(newparagraph);
+
+            var GameLogText = new TextRange(GameLogDocument.ContentStart, GameLogDocument.ContentEnd);
+
+            try
+            {
+                CurrentGame.GameLog = GameLogText.Text;
+                var EditGame = await Core.db.OnLineGames.FindAsync(CurrentGame.ID);
+                EditGame = CurrentGame;
+
+                await Core.db.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message.ToString());
+            }
+            */
         }
 
         public void StartTimer()
@@ -917,25 +974,71 @@ namespace BarsGroup.View.Windows
                 Hours++;
             }
 
-            
             Core.db = new MainEntities();
-
             OnLineGames Gamesdb = await Core.db.OnLineGames.FindAsync(CurrentGame.ID);
 
             if (CurrentGame != Gamesdb)
             {
-                Console.WriteLine("Изменение произошло");
-
                 CurrentGame = Gamesdb;
 
+                if (CurrentGame.StatusID == 3)
+                {
+                    Timer.Stop();
+                    var H = Hours * 60 * 60;
+                    var M = Minutes * 60;
+                    var S = Seconds + M + H;
+
+                    try
+                    {
+                        var ThisUserInGame = await Core.db.UsersInOnLineGame.FindAsync(ThisUser.ID);
+                        ThisUserInGame.StatusID = 3;
+
+                        // Работа со статистикой и рекордами осталась
+
+                        await Core.db.SaveChangesAsync();
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(ex.Message.ToString());
+                    }
+
+                    if (WalksNumber % 2 != 0 && ThisUser.StatusID == 2)
+                        MessageBox.Show("Ваш противник сдался\nВаши очки: " + User2Quantity * S, "Вы выиграли!", MessageBoxButton.OK, MessageBoxImage.Information);
+                    else if (WalksNumber % 2 == 0 && ThisUser.StatusID == 1)
+                        MessageBox.Show("Ваш противник сдался\nВаши очки: " + User1Quantity * S, "Вы выиграли!", MessageBoxButton.OK, MessageBoxImage.Information);
+
+                    foreach (Window item in Application.Current.Windows)
+                    {
+                        if (item.Name == "LogGameWindow")
+                        {
+                            this.Close();
+                            return;
+                        }
+                    }
+
+                    string str = Gamesdb.GameLog;
+                    Paragraph paragraph = new Paragraph();
+                    paragraph.Inlines.Add(str);
+
+                    GameLogDocument = new FlowDocument();
+                    GameLogDocument.Blocks.Add(paragraph);
+
+                    var newGameLogDocument = GameLogDocument;
+                    GameLogWindow window = new GameLogWindow(newGameLogDocument);
+                    window.Show();
+
+                    this.Close();
+                }
+
                 var CurrentLocationOfChekersStr = String.Empty;
+                var GameLogText = new TextRange(GameLogDocument.ContentStart, GameLogDocument.ContentEnd);
 
                 foreach (var item in CurrentGameArea)
                 {
                     CurrentLocationOfChekersStr += item + " ";
                 }
 
-                if (Gamesdb.LocationOfCheckers != String.Empty && Gamesdb.LocationOfCheckers != CurrentLocationOfChekersStr)
+                if (/*Gamesdb.GameLog != GameLogText.Text && */Gamesdb.LocationOfCheckers != String.Empty && Gamesdb.LocationOfCheckers != CurrentLocationOfChekersStr)
                 {
                     string[] words = CurrentGame.LocationOfCheckers.Split(new char[] { ' ' });
 
@@ -982,40 +1085,60 @@ namespace BarsGroup.View.Windows
                         }
                     }
 
-                    try
-                    {
-                        //CurrentGame.LocationOfCheckers = CurrentLocationOfChekersStr;
-                        var EditGame = await Core.db.OnLineGames.FindAsync(CurrentGame.ID);
-                        EditGame.LocationOfCheckers = "";
+                    string str = Gamesdb.GameLog;
+                    Paragraph paragraph = new Paragraph();
+                    paragraph.Inlines.Add(str);
 
-                        await Core.db.SaveChangesAsync();
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show(ex.Message.ToString());
-                    }
+                    GameLogDocument = new FlowDocument();
+                    GameLogDocument.Blocks.Add(paragraph);
 
                     WalksNumber++;
-                } 
+                }
             }
 
             this.Title = "Игра против пользователя с ником " + EnemyLogin;
             if (WalksNumber % 2 != 0 && ThisUser.StatusID == 1)
-            {
-                WhoWalks = "Черные";
                 this.Title += " (Ваш ход)";
-            }
+            else if (WalksNumber % 2 == 0 && ThisUser.StatusID == 2)
+                this.Title += " (Ваш ход)";
             else
-            {
-                WhoWalks = "Белые";
                 this.Title += " (Ход противника)";
-            }
+
+            if (WalksNumber % 2 == 0)
+                WhoWalks = "Белые";
+            else
+                WhoWalks = "Черные";
+
             WhoWalksTxt.Text = WhoWalks;
             WalksNumerTxt.Text = WalksNumber.ToString();
             InfoTimer.Text = string.Format("{0:00}:{1:00}", Hours, Minutes);
             InfoTimer.ToolTip = string.Format("{0:00}:{1:00}:{2:00}", Hours, Minutes, Seconds);
             ScoreBlack.Text = User1Quantity.ToString();
             ScoreWhite.Text = User2Quantity.ToString();
+        }
+
+        private async void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            try
+            {
+                if (CurrentGame.StatusID == 2)
+                {
+                    var Game = await Core.db.OnLineGames.FindAsync(CurrentGame.ID);
+                    Game.StatusID = 3;
+
+                    var ThisUserInGame = await Core.db.UsersInOnLineGame.FindAsync(ThisUser.ID);
+                    ThisUserInGame.StatusID = 4;
+                }
+
+                var EditUser = await Core.db.Users.FindAsync(ThisUser.UserID);
+                EditUser.StatusID = 2;
+
+                await Core.db.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message.ToString());
+            }
         }
     }
 }

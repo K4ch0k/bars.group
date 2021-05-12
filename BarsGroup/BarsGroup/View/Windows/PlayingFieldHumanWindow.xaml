@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:BarsGroup.View.Windows"
         mc:Ignorable="d"
         Title="Игра против человека" Height="830" Width="773" MinHeight="580" MinWidth="534"
-        Background="Black">
+        Background="Black" Closing="Window_Closing">
     <Grid x:Name="MainGrid">
         <Viewbox Stretch="Uniform">
             <StackPanel>

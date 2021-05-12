@@ -744,30 +744,30 @@ namespace BarsGroup.View.Windows
 
             if (UserSelect == MessageBoxResult.Yes)
             {
-                var a = Seconds / 60;
-                decimal total = (Minutes + (Hours * 60) + (Seconds / 60));
+                var H = Hours * 60 * 60;
+                var M = Minutes * 60;
+                var S = Seconds + M + H;
 
                 Paragraph newparagraph = new Paragraph();
                 Run newRun = new Run();
                 newRun.Text = "Ход " + WalksNumber + "\n";
 
-
                 if (WalksNumber % 2 == 0)
                 {
-                    MessageBox.Show("Ваш противник сдался\nВаши очки: " + User1Quantity * total, "Вы выиграли!", MessageBoxButton.OK, MessageBoxImage.Information);
+                    MessageBox.Show("Ваш противник сдался\nВаши очки: " + User1Quantity * S, "Вы выиграли!", MessageBoxButton.OK, MessageBoxImage.Information);
                     newRun.Text += "Белые сдались";
                 }
                 else
                 {
-                    MessageBox.Show("Ваш противник сдался\nВаши очки: " + User2Quantity * total, "Вы выиграли!", MessageBoxButton.OK, MessageBoxImage.Information);
+                    MessageBox.Show("Ваш противник сдался\nВаши очки: " + User2Quantity * S, "Вы выиграли!", MessageBoxButton.OK, MessageBoxImage.Information);
                     newRun.Text += "Черные сдались";
                 }
                 newparagraph.Inlines.Add(newRun);
                 GameLogDocument.Blocks.Add(newparagraph);
                 newparagraph.Inlines.Clear();
                 newRun.Text = "Итоговый счет игры:\n"
-                            + "Всего белых шашек на поле:" + User1Quantity + "; Очки белого:" + (User2Quantity * total)
-                            + "\nВсего черных шашек на поле:" + User2Quantity + "; Очки черного:" + (User1Quantity * total);
+                            + "Всего белых шашек на поле:" + User1Quantity + "; Очки белого:" + (User2Quantity * S)
+                            + "\nВсего черных шашек на поле:" + User2Quantity + "; Очки черного:" + (User1Quantity * S);
                 newparagraph.Inlines.Add(newRun);
                 GameLogDocument.Blocks.Add(newparagraph);
                 this.Close();
@@ -781,7 +781,7 @@ namespace BarsGroup.View.Windows
             {
                 if (item.Name == "LogGameWindow")
                 {
-                    MessageBox.Show("Можно открыть только одно окно с логом игры", "Информация", MessageBoxButton.OK, MessageBoxImage.Information);
+                    MessageBox.Show("Окно с логом игры уже открыто", "Информация", MessageBoxButton.OK, MessageBoxImage.Information);
                     return;
                 }
             }
