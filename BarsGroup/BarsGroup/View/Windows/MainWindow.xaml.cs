@@ -43,7 +43,7 @@ namespace BarsGroup.View.Windows
             if (Core.CurrentUser.ID != 0)
             {
                 StartNewGameBtn.Visibility = Visibility.Visible;
-                StartGameBtn.Visibility = Visibility.Visible;
+                //StartGameBtn.Visibility = Visibility.Visible;
             }
         }
 
@@ -61,7 +61,8 @@ namespace BarsGroup.View.Windows
 
         private void SeeScoreBtn_Click(object sender, RoutedEventArgs e)
         {
-            MainFrame.Navigate(new Pages.ScoreTablePage());
+            //MainFrame.Navigate(new Pages.ScoreTablePage());
+            MessageBox.Show("В разработке...", "Информация", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
         private async void ExitBtn_Click(object sender, RoutedEventArgs e)
